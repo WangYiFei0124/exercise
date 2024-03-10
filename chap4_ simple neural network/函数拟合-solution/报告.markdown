@@ -1,0 +1,64 @@
+# 使用两层ReLU神经网络拟合正弦函数
+
+## 函数定义
+
+定义了一个目标函数 `f(x) = sin(x)`。这是数学中的标准正弦函数，具有周期性和振荡特性，它可以用于测试机器学习模型对于周期性数据的学习能力。
+
+## 数据采集
+
+创建了两个数据集：训练集和测试集。这些数据点均匀地分布在从 `-π` 到 `2π` 的区间内。
+
+- 训练集有1000个样本点，用于训练神经网络。
+- 测试集有700个样本点，用于验证网络的拟合效果。
+
+数据是通过以下代码生成的：
+
+```python
+x_train = np.linspace(-np.pi, 2*np.pi, 1000).reshape(-1, 1)
+y_train = np.sin(x_train)
+x_test = np.linspace(-np.pi, 2*np.pi, 700).reshape(-1, 1)
+y_test = np.sin(x_test)
+```
+
+## 模型描述
+
+使用的神经网络模型是一个简单的两层全连接网络。第一层有10个神经元，并使用ReLU作为激活函数。第二层是一个单神经元输出层，没有激活函数，直接输出网络的预测值。模型定义代码如下：
+
+```python
+class TwoLayerNet(nn.Module):
+    def __init__(self):
+        super(TwoLayerNet, self).__init__()
+        self.linear1 = nn.Linear(1, 10)
+        self.relu = nn.ReLU()
+        self.linear2 = nn.Linear(10, 1)
+
+    def forward(self, x):
+        x = self.relu(self.linear1(x))
+        x = self.linear2(x)
+        return x
+```
+
+## 训练过程
+
+神经网络使用均方误差（MSE）作为损失函数，并采用Adam优化器进行训练。学习率设置为0.01。网络在训练集上训练了1000个epoch。
+
+```python
+for epoch in range(1000):
+    optimizer.zero_grad()
+    output = model(x_train_tensor)
+    loss = criterion(output, y_train_tensor)
+    loss.backward()
+    optimizer.step()
+```
+
+并在每100个epoch，我们打印出损失值来监控训练过程。
+
+
+## 拟合效果
+在训练结束后，我使用测试集来评估模型的拟合效果。下图展示了模型的预测结果与真实函数值,蓝色点表示目标函数的真实值，橙色点表示神经网络模型的预测值。从图中可以观察到，尽管在某些区域模型存在轻微的预测误差，但整体上模型能够非常好地拟合给定的正弦函数，证明了模型捕获目标函数周期性特征的能力。
+
+![alt text](image.png)
+
+
+## 结论
+本实验使用了一个简单的两层ReLU神经网络来拟合正弦函数的过程。实验结果表明，尽管模型结构简单，但仍能够很好地学习到正弦函数的周期性规律，并在测试集上达到了相对准确的拟合效果。这证实了两层ReLU网络作为通用函数逼近器的能力。
